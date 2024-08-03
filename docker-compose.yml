@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shelteraid-backend
+    restart: always
+    depends_on:
+      - yolov8-model
+      - fasterrcnn-model
+    environment:
+      - LOG_LEVEL=info
+    volumes:
+      - ./backend:/app
+    ports:
+      - 8000:8000
+    command:
+      [
+        "gunicorn",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+        "--bind",
+        "0.0.0.0:8000",
+        "app:app",
+        "--timeout",
+        "120"
+      ]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shelteraid-frontend
+    restart: always
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+
+  yolov8-model:
+    build:
+      context: ./yolov8_model
+      dockerfile: Dockerfile
+    container_name: yolov8-model
+    restart: always
+    mem_limit: 16g
+    volumes:
+      - ./yolov8_model:/app
+    ports:
+      - 8080:8080
+    command:
+      [
+        "gunicorn",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+        "--bind",
+        "0.0.0.0:8080",
+        "app:app",
+        "--timeout",
+        "120"
+      ]
+
+  fasterrcnn-model:
+    build:
+      context: ./fasterRCNN_model
+      dockerfile: Dockerfile
+    container_name: fasterrcnn-model
+    restart: always
+    mem_limit: 16g
+    volumes:
+      - ./fasterRCNN_model:/app
+    ports:
+      - 8081:8081
+    command:
+      [
+        "gunicorn",
+        "-k",
+        "uvicorn.workers.UvicornWorker",
+        "--bind",
+        "0.0.0.0:8081",
+        "app:app",
+        "--timeout",
+        "120"
+      ]
+
