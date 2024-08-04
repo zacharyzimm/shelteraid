@@ -50,7 +50,6 @@ services:
     mem_limit: 16g
     volumes:
       - ./yolov8_model:/app
-      - ~/.aws/credentials:/root/.aws/credentials:ro  # Mount AWS credentials file
     ports:
       - 8080:8080
     command:
@@ -74,7 +73,6 @@ services:
     mem_limit: 16g
     volumes:
       - ./fasterRCNN_model:/app
-      - ~/.aws/credentials:/root/.aws/credentials:ro  # Mount AWS credentials file
     ports:
       - 8081:8081
     command:
