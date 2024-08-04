@@ -5,6 +5,7 @@ import torch
 import os
 import ast
 import numpy as np
+import boto3
 
 from ultralytics import YOLO
 
@@ -23,8 +24,14 @@ class Payload(BaseModel):
             raise ValueError('Image must be a 3D NumPy array with 1, 3, or 4 channels')
         return v
 
-def load_model(checkpoint_dir, model_name):
-    model_path = os.path.join(checkpoint_dir, model_name)
+def load_weights_from_s3(s3_bucket, model_name):
+    s3 = boto3.client("s3")
+    model_weights = f"weights/{model_name}"
+    s3.download_file(s3_bucket, model_weights, model_weights)
+    return model_weights
+
+def load_model(s3_bucket, model_name):
+    model_path = load_weights_from_s3(s3_bucket, model_name)
     model = YOLO(model_path)
 
     return model
@@ -56,7 +63,7 @@ def load_payload(payload: Payload):
 
 
 app = FastAPI()
-model = load_model(checkpoint_dir="weights", model_name="shelteraid_yolov8.pt")
+model = load_model(s3_bucket="shelteraid", model_name="shelteraid_yolov8.pt")
 
 @app.get("/health")
 def health_check():

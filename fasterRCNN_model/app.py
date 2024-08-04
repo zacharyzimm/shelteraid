@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, validator
 from typing import List
+import boto3
 import torch
 import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
@@ -39,8 +40,15 @@ def get_model(num_classes):
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
 
     return model
-def load_model(checkpoint_dir, model_name):
-    checkpoint = torch.load(os.path.join(checkpoint_dir, model_name), map_location=DEVICE)
+
+def load_weights_from_s3(s3_bucket, model_name):
+    s3 = boto3.client("s3")
+    model_weights = f"weights/{model_name}"
+    s3.download_file(s3_bucket, model_weights, model_weights)
+    return torch.load(model_weights, map_location=DEVICE)
+
+def load_model(s3_bucket, model_name):
+    checkpoint = load_weights_from_s3(s3_bucket, model_name)
     model = get_model(2)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.to(DEVICE)
@@ -97,7 +105,7 @@ def load_payload(payload: Payload):
 
 
 app = FastAPI()
-model = load_model(checkpoint_dir="weights", model_name="resnet50_fasterRCNN.pt")
+model = load_model(s3_bucket="shelteraid", model_name="resnet50_fasterRCNN.pt")
 
 @app.get("/health")
 def health_check():
