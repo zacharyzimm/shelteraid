@@ -13,7 +13,6 @@ RUN apt-get update && \
 
 COPY ./app.py /app/app.py
 COPY ./requirements.txt /app/requirements.txt
-COPY ./weights /app/weights
 
 WORKDIR /app
 
