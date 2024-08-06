@@ -24,17 +24,28 @@ class Payload(BaseModel):
             raise ValueError('Image must be a 3D NumPy array with 1, 3, or 4 channels')
         return v
 
-def load_weights_from_s3(s3_bucket, model_name):
+def download_weights_from_s3(model_name):
     s3 = boto3.client("s3")
+    weights_dir = 'weights'
+
+    # Ensure the directory exists
+    if not os.path.exists(weights_dir):
+        os.makedirs(weights_dir)
+
+    # Download file
+    try:
+        local_path = os.path.join(os.getcwd(), f"{weights_dir}/{model_name}")
+        s3.download_file("shelteraid", f"{weights_dir}/{model_name}", local_path)
+    except FileNotFoundError as e:
+        print(f"File not found error: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def load_model(model_name):
+    download_weights_from_s3(model_name)
     model_weights = f"weights/{model_name}"
-    s3.download_file(s3_bucket, model_weights, model_weights)
-    return model_weights
-
-def load_model(s3_bucket, model_name):
-    model_path = load_weights_from_s3(s3_bucket, model_name)
-    model = YOLO(model_path)
-
-    return model
+    model_weights = os.path.join(os.getcwd(), model_weights)
+    return YOLO(model_weights)
 
 def invoke(image, model):
     torch.cuda.empty_cache()
@@ -63,7 +74,7 @@ def load_payload(payload: Payload):
 
 
 app = FastAPI()
-model = load_model(s3_bucket="shelteraid", model_name="shelteraid_yolov8.pt")
+model = load_model(model_name="shelteraid_yolov8.pt")
 
 @app.get("/health")
 def health_check():

@@ -41,14 +41,31 @@ def get_model(num_classes):
 
     return model
 
-def load_weights_from_s3(s3_bucket, model_name):
+def download_weights_from_s3(model_name):
     s3 = boto3.client("s3")
-    model_weights = f"weights/{model_name}"
-    s3.download_file(s3_bucket, model_weights, model_weights)
-    return torch.load(model_weights, map_location=DEVICE)
+    weights_dir = 'weights'
 
-def load_model(s3_bucket, model_name):
-    checkpoint = load_weights_from_s3(s3_bucket, model_name)
+    # Ensure the directory exists
+    if not os.path.exists(weights_dir):
+        os.makedirs(weights_dir)
+
+    # Download file
+    try:
+        local_path = os.path.join(os.getcwd(), f"{weights_dir}/{model_name}")
+        s3.download_file("shelteraid", f"{weights_dir}/{model_name}", local_path)
+    except FileNotFoundError as e:
+        print(f"File not found error: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def load_weights_from_s3(model_name):
+    download_weights_from_s3(model_name)
+    model_weights = f"weights/{model_name}"
+    return torch.load(os.path.join(os.getcwd(), model_weights), map_location=DEVICE)
+
+
+def load_model(model_name):
+    checkpoint = load_weights_from_s3(model_name)
     model = get_model(2)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.to(DEVICE)
@@ -105,7 +122,7 @@ def load_payload(payload: Payload):
 
 
 app = FastAPI()
-model = load_model(s3_bucket="shelteraid", model_name="resnet50_fasterRCNN.pt")
+model = load_model(model_name="resnet50_fasterRCNN.pt")
 
 @app.get("/health")
 def health_check():
