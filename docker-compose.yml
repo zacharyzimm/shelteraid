@@ -48,6 +48,7 @@ services:
     container_name: yolov8-model
     restart: always
     mem_limit: 16g
+    mem_reservation: 8g
     volumes:
       - ./yolov8_model:/app
       - ~/.aws/:/root/.aws:ro
@@ -79,6 +80,7 @@ services:
     container_name: fasterrcnn-model
     restart: always
     mem_limit: 16g
+    mem_reservation: 8g
     volumes:
       - ./fasterRCNN_model:/app
       - ~/.aws/:/root/.aws:ro
