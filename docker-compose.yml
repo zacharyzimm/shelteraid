@@ -52,6 +52,13 @@ services:
       - ./yolov8_model:/app
     ports:
       - 8080:8080
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     command:
       [
         "gunicorn",
@@ -75,6 +82,13 @@ services:
       - ./fasterRCNN_model:/app
     ports:
       - 8081:8081
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     command:
       [
         "gunicorn",
