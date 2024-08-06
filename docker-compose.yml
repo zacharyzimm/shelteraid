@@ -96,7 +96,7 @@ services:
           devices:
             - driver: nvidia
               count: 1
-              capabilities: [ gpu ]
+              capabilities: [gpu]
     command:
       [
         "gunicorn",
