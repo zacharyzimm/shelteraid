@@ -65,11 +65,11 @@ def _image_to_array(image):
     # https://github.com/tiangolo/fastapi/issues/3258
     response_class=Response,
 )
-async def invoke_model(file: UploadFile = File(...), model: str = Form(...)):
+def invoke_model(file: UploadFile = File(...), model: str = Form(...)):
     try:
         logger.info("Reading file")
         # Read the uploaded file
-        content = await file.read()
+        content = file.file.read()
         image = _load_image(content)
 
         # Simulate model processing (replace this with actual model inference code)
