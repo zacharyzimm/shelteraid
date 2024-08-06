@@ -95,7 +95,7 @@ function CodePage() {
         //        }
         //         const backendUrl = "http://" + hostname + ":8000/invoke_model/";
         // TODO: fix this so i don't have to hard code in the EC2 address every time
-        const backendUrl = "http://shelteraid-backend:8000/invoke_model"
+        const backendUrl = "http://api/invoke"
         console.log("Making request to " + backendUrl)
         const response = await fetch(backendUrl, {
           method: 'POST',
