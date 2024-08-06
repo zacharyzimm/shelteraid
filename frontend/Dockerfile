@@ -1,15 +1,28 @@
-# Build the react app
-FROM node:16 as build
+# Stage 1: Build the React app
+FROM node:16 AS build
 
 WORKDIR /app
 
-ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json package-lock.json ./
 
-COPY package.json ./
 RUN npm install
-RUN npm install react-scripts@3.4.1 -g
-
+ENV PATH /app/node_modules/.bin:$PATH
 COPY . ./
 
-CMD ["npm", "start"]
+RUN npm run build
+
+# Stage 2: Serve the React app using Nginx
+FROM nginx:alpine
+
+# Remove the default Nginx static assets
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy the build output to the Nginx html folder
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
 
