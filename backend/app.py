@@ -19,7 +19,7 @@ app = FastAPI()
 
 def get_ec2_public_ip():
     try:
-        response = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4')
+        response = requests.get('http://169.254.169.254/latest/meta-data/public-hostname')
         response.raise_for_status()
         logger.info(f"Found Public IP of {response.text}")
         return response.text
