@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: shelteraid-backend
     restart: always
+    networks:
+      - my_service_default
     depends_on:
       - yolov8-model
       - fasterrcnn-model
@@ -34,6 +36,8 @@ services:
       dockerfile: Dockerfile
     container_name: shelteraid-frontend
     restart: always
+    networks:
+      - my_service_default
     volumes:
       - ./frontend:/app
     ports:
@@ -52,6 +56,8 @@ services:
       - ./yolov8_model:/app
     ports:
       - 8080:8080
+    networks:
+      - my_service_default
     deploy:
       resources:
         reservations:
@@ -77,6 +83,8 @@ services:
       dockerfile: Dockerfile
     container_name: fasterrcnn-model
     restart: always
+    networks:
+      - my_service_default
     mem_limit: 16g
     volumes:
       - ./fasterRCNN_model:/app
@@ -88,7 +96,7 @@ services:
           devices:
             - driver: nvidia
               count: 1
-              capabilities: [gpu]
+              capabilities: [ gpu ]
     command:
       [
         "gunicorn",
@@ -101,3 +109,6 @@ services:
         "120"
       ]
 
+networks:
+  my_service_default:
+    external: true
