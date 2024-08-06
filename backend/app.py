@@ -109,4 +109,5 @@ async def invoke_model(file: UploadFile = File(...), model: str = Form(...)):
 
 @app.get("/health")
 def health_check():
+    logger.info("Health check triggered")
     return "I'm alive!"
