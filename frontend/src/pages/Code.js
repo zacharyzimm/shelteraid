@@ -94,6 +94,7 @@ function CodePage() {
 //        throw new Error('Failed to fetch EC2 public hostname');
 //        }
 //         const backendUrl = "http://" + hostname + ":8000/invoke_model/";
+// TODO: fix this so i don't have to hard code in the EC2 address every time
         const backendUrl = "http://ec2-44-206-245-174.compute-1.amazonaws.com:8000/invoke_model"
         const response = await fetch(backendUrl, {
           method: 'POST',

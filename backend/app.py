@@ -67,6 +67,7 @@ def _image_to_array(image):
 )
 async def invoke_model(file: UploadFile = File(...), model: str = Form(...)):
     try:
+        logger.info("Reading file")
         # Read the uploaded file
         content = await file.read()
         image = _load_image(content)
@@ -79,10 +80,12 @@ async def invoke_model(file: UploadFile = File(...), model: str = Form(...)):
         elif model == "FasterRCNN":
             MODEL_API_URL = "http://fasterrcnn-model:8081"
 
+        logger.info(f"Sending request to {MODEL_API_URL}")
+
         # Send the POST request with the JSON payload
         response = requests.post(url=f"{MODEL_API_URL}/predict", json=model_payload)
 
-        logging.info(f"Received response with status code {response.status_code}")
+        logger.info(f"Received response with status code {response.status_code}")
 
         # Get the output from the response and convert it to a bytes object
         output_image = response.json().get("output")[
