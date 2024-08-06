@@ -94,7 +94,7 @@ function CodePage() {
 //        throw new Error('Failed to fetch EC2 public hostname');
 //        }
 //         const backendUrl = "http://" + hostname + ":8000/invoke_model/";
-        const backendUrl = "http://ec2-34-205-144-30.compute-1.amazonaws.com:8000/invoke_model"
+        const backendUrl = "http://ec2-44-206-245-174.compute-1.amazonaws.com:8000/invoke_model"
         const response = await fetch(backendUrl, {
           method: 'POST',
           body: formData
