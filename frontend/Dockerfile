@@ -3,7 +3,8 @@ FROM node:16 AS build
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json ./ 
+COPY package-lock.json ./
 
 RUN npm install
 ENV PATH /app/node_modules/.bin:$PATH
