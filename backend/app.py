@@ -27,9 +27,9 @@ def get_ec2_public_ip():
         print(f"Error getting EC2 public IP address: {e}")
         return None
 
-instance_ip = f"http://{get_ec2_public_ip()}:80"
+instance_ip = f"http://{get_ec2_public_ip()}"
 
-origins = ["http://shelteraid-frontend:80", "http://localhost:80", instance_ip]
+origins = ["http://shelteraid-frontend:80", "http://localhost:80", instance_ip, f"{instance_ip}:80"]
 
 app.add_middleware(
     CORSMiddleware,
