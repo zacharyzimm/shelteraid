@@ -5,7 +5,15 @@ from PIL import Image
 import io
 import requests
 import numpy as np
+from fastapi.logger import logger
 import logging
+
+gunicorn_logger = logging.getLogger('gunicorn.error')
+logger.handlers = gunicorn_logger.handlers
+if __name__ != "main":
+    logger.setLevel(gunicorn_logger.level)
+else:
+    logger.setLevel(logging.DEBUG)
 
 app = FastAPI()
 
