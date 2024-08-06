@@ -17,28 +17,29 @@ else:
 
 app = FastAPI()
 
-def get_ec2_public_ip():
-    try:
-        response = requests.get('http://169.254.169.254/latest/meta-data/public-hostname')
-        response.raise_for_status()
-        logger.info(f"Found Public IP of {response.text}")
-        return response.text
-    except requests.RequestException as e:
-        print(f"Error getting EC2 public IP address: {e}")
-        return None
+# def get_ec2_public_ip():
+#     try:
+#         response = requests.get('http://169.254.169.254/latest/meta-data/public-hostname')
+#         response.raise_for_status()
+#         logger.info(f"Found Public IP of {response.text}")
+#         return response.text
+#     except requests.RequestException as e:
+#         print(f"Error getting EC2 public IP address: {e}")
+#         return None
 
 
-instance_ip = get_ec2_public_ip()
+# instance_ip = get_ec2_public_ip()
 
-instance_address = f"http://{instance_ip}"
+# instance_address = f"http://{instance_ip}"
 
-logger.info(f"Adding {instance_address} to allowed origins")
+#logger.info(f"Adding {instance_address} to allowed origins")
 
-origins = ["http://shelteraid-frontend:80", "http://localhost:80", instance_address, f"{instance_address}:80"]
+# origins = ["http://shelteraid-frontend:80", "http://localhost:80", instance_address, f"{instance_address}:80"]
 
+# Allowing all origins to try and fix the error
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
