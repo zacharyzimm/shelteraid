@@ -26,20 +26,20 @@ function CodePage() {
   const [radio, setRadio] = useState('');
   const [outputImage, setOutputImage] = useState(null);
   
-  async function getEC2PublicHostname() {
-    try {
-        const response = await fetch('http://169.254.169.254/latest/meta-data/public-hostname');
-        if (!response.ok) {
-            throw new Error('Failed to fetch EC2 public hostname');
-        }
-        const hostname = await response.text();
-        console.log('EC2 Public Hostname:', hostname);
-        return hostname;
-    } catch (error) {
-        console.error('Error fetching EC2 public hostname:', error);
-        return null;
-    }
-}
+//  async function getEC2PublicHostname() {
+//    try {
+//        const response = await fetch('http://169.254.169.254/latest/meta-data/public-hostname');
+//        if (!response.ok) {
+//            throw new Error('Failed to fetch EC2 public hostname');
+//        }
+//        const hostname = await response.text();
+//        console.log('EC2 Public Hostname:', hostname);
+//        return hostname;
+//    } catch (error) {
+//        console.error('Error fetching EC2 public hostname:', error);
+//        return null;
+//    }
+//}
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -89,11 +89,12 @@ function CodePage() {
     formData.append('model', selectedModel);
     
       try {
-        const hostname = await getEC2PublicHostname();
-        if (!hostname) {
-        throw new Error('Failed to fetch EC2 public hostname');
-        }
-         const backendUrl = "http://" + hostname + ":8000/invoke_model/";
+//        const hostname = await getEC2PublicHostname();
+//        if (!hostname) {
+//        throw new Error('Failed to fetch EC2 public hostname');
+//        }
+//         const backendUrl = "http://" + hostname + ":8000/invoke_model/";
+        const backendUrl = "http://ec2-34-205-144-30.compute-1.amazonaws.com:8000/invoke_model"
         const response = await fetch(backendUrl, {
           method: 'POST',
           body: formData
