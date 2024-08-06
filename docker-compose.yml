@@ -11,7 +11,7 @@ services:
       - yolov8-model
       - fasterrcnn-model
     environment:
-      - LOG_LEVEL=info
+      - LOG_LEVEL=debug
     volumes:
       - ./backend:/app
     ports:
