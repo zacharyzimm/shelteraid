@@ -9,7 +9,7 @@ import logging
 
 app = FastAPI()
 
-origins = ["http://shelteraid-frontend:3000", "http://localhost:3000"]
+origins = ["http://shelteraid-frontend:80", "http://localhost:80"]
 
 app.add_middleware(
     CORSMiddleware,
