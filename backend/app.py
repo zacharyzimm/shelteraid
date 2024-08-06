@@ -9,7 +9,16 @@ import logging
 
 app = FastAPI()
 
-origins = ["http://shelteraid-frontend:80", "http://localhost:80"]
+def get_ec2_public_ip():
+    try:
+        response = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4')
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        print(f"Error getting EC2 public IP address: {e}")
+        return None
+
+origins = ["http://shelteraid-frontend:80", "http://localhost:80", f"http://{get_ec2_public_ip()}:80"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -69,7 +78,7 @@ async def invoke_model(file: UploadFile = File(...), model: str = Form(...)):
         output_image = Image.fromarray(image_array)
 
         img_byte_arr = io.BytesIO()
-        output_image.save(img_byte_arr, format="PNG")
+        # output_image.save(img_byte_arr, format="PNG")
         img_byte_arr = img_byte_arr.getvalue()
 
         # media_type here sets the media type of the actual response sent to the client.
